@@ -1,0 +1,32 @@
+# The HID Vendor ID
+VARIABLE vendor_id 0x0000
+
+# The HID Product ID
+VARIABLE product_id 0x0000
+
+# The HID Serial Number - Required for more than one of the same device
+# Convenient to leave at nil for only one of the same device
+VARIABLE serial_number nil
+
+# Max read size from the device
+VARIABLE read_size 64
+
+# Timeout to break and reconnect connection to devce.
+# 5 seconds default assumes continuous data available from the device.  Set to nil for delayed data
+VARIABLE read_timeout 5.0
+
+# Delay used to throttle reading. nil for no throttle
+VARIABLE read_delay nil
+
+# Port to listen for connections from COSMOS - Plugin must match
+VARIABLE router_port 2951
+
+# Port to listen on for connections from COSMOS. Defaults to localhost for security. Will need to be opened
+# if COSMOS is on another machine.
+VARIABLE router_listen_address 127.0.0.1
+
+INTERFACE HID_API_INT hid_api_interface.rb <%= vendor_id %> <%= product_id %> <%= serial_number %> <%= read_size %> <%= read_timeout %> <%= read_delay %>
+
+ROUTER HID_API_ROUTER tcpip_server_interface.rb <%= router_port %> <%= router_port %> 10.0 nil BURST
+  ROUTE HID_API_INT
+  OPTION LISTEN_ADDRESS <%= router_listen_address %>
